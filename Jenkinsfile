@@ -1,21 +1,28 @@
 pipeline {
     agent any
+
+    tools {
+        maven 'Maven 3.x' // Ensure this matches your Jenkins Global Tool Configuration name
+    }
+
     stages {
         stage('Checkout') {
             steps {
+                // This fetches the code from your repository
                 checkout scm
             }
         }
-        stage('Docker Build') {
+
+        stage('Build & Test') {
             steps {
-                // This builds your Docker image from the Dockerfile
-                sh 'docker build -t student-timetable:latest .'
+                // Executes the Maven lifecycle: compile and run JUnit tests
+                sh 'mvn clean test'
             }
         }
-        stage('K8s Deploy') {
+
+        stage('Result') {
             steps {
-                // This deploys it to Kubernetes
-                sh 'kubectl apply -f deployment.yaml'
+                echo 'Build and Testing Completed Successfully!'
             }
         }
     }
